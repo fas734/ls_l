@@ -56,7 +56,7 @@ int main(int argc, const char *argv[])
                 "llu %s %2u %02u:%02u %s\n"}; /* size, remainder of line */
     unsigned int format_string_array_size = (sizeof(format_string_array) \
                                         / sizeof(format_string_array[0]));
-    char *format_string; // for resultin format string
+    char *format_string = NULL; // for resulting format string
     unsigned int format_string_size = 0;
 
 
@@ -79,6 +79,11 @@ int main(int argc, const char *argv[])
         file_count++;
     }
     files_info = malloc(file_count * sizeof(file_info_struct));
+    if(files_info == NULL)
+    {
+        perror("malloc(file_info_struct) error");
+        exit(1);
+    }
 
     // reset pointer, infill files_info and count max_lengths
     rewinddir(cur_dir_ptr);
@@ -153,8 +158,13 @@ int main(int argc, const char *argv[])
                         + max_length_owner \
                         + max_length_group \
                         + max_length_size;
-    printf("format_string_size = %u\n", format_string_size);
+    // printf("format_string_size = %u\n", format_string_size); // that size a little bit more than it has to
     format_string = malloc((format_string_size + 1) * sizeof(char)); // '+1' for '\0'
+    if(format_string == NULL)
+    {
+        perror("malloc(format_string[]) error");
+        exit(1);
+    }
     sprintf(format_string, "%s", format_string_array[0]);
     sprintf(format_string + strlen(format_string), "%u", max_length_nlink);
     sprintf(format_string + strlen(format_string), "%s", format_string_array[1]);
